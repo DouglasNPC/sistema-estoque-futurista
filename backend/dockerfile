@@ -1,0 +1,15 @@
+# Usa uma imagem leve do Python
+FROM python:3.9
+
+# Define a pasta de trabalho dentro do container
+WORKDIR /app
+
+# Copia a lista de dependências e instala
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia todo o seu código para dentro do container
+COPY . .
+
+# Comando para rodar o servidor quando o container ligar
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
