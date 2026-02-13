@@ -4,7 +4,7 @@ import axios from 'axios';
 const api = axios.create({
     // Se estiver rodando no mesmo PC, use localhost.
     // Se for subir pro GitHub pro seu colega, troque pelo seu IP de rede (ex: 192.168.X.X)
-    baseURL: 'http://localhost:8000', 
+    baseURL: 'http://192.168.3.98:8000', 
 });
 
 export default api;
