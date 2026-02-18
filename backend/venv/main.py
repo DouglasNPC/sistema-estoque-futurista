@@ -49,3 +49,28 @@ def criar_produto(produto: schemas.ProdutoCriar, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(novo_produto)
     return novo_produto
+
+# 1. ROTA DE CRIAR PRODUTO (Atualizada para gerar Log)
+@app.post("/produtos/", response_model=schemas.Produto)
+def criar_produto(produto: schemas.ProdutoCriar, db: Session = Depends(get_db)):
+    # Cria o produto
+    novo_produto = models.Produto(**produto.dict())
+    db.add(novo_produto)
+    db.commit()
+    db.refresh(novo_produto)
+
+    # GERA O LOG AUTOMATICAMENTE
+    novo_log = models.Log(
+        produto_nome=novo_produto.nome,
+        acao="Entrada de Estoque",
+        quantidade=novo_produto.quantidade
+    )
+    db.add(novo_log)
+    db.commit()
+
+    return novo_produto
+
+# 2. ROTA DE LISTAR LOGS (A que você pediu)
+@app.get("/logs/")
+def listar_logs(db: Session = Depends(get_db)):
+    return db.query(models.Log).order_by(models.Log.data.desc()).all()
