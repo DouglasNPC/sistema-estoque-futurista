@@ -1,15 +1,30 @@
-# Ambientes Virtuais (Python)
+# =========================
+# 🐍 BACKEND (Python)
+# =========================
+backend/venv/
 venv/
 env/
-
-# Arquivos de cache do Python que pesam muito
 __pycache__/
 *.pyc
 
-# Banco de dados local (Se você estiver usando SQLite no futuro)
+# 🗄️ BANCO DE DADOS (Impede de sobrescrever o banco de produção!)
 *.db
 *.sqlite3
 
-# Arquivos de sistema operacional
+# =========================
+# ⚛️ FRONTEND (Node/React)
+# =========================
+frontend/node_modules/
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# =========================
+# 💻 SISTEMA OPERACIONAL E EDITORES
+# =========================
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+.env
