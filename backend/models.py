@@ -56,3 +56,4 @@ class Log(Base):
     # Novos Campos para auditoria (LGPD e controle de acesso)
     usuario_nome = Column(String, nullable=True) # Nome do usuário que fez a movimentação
     detalhes_auditoria = Column(String, nullable=True) # Qualquer detalhe extra
+    

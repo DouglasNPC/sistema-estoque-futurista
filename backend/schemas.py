@@ -118,3 +118,4 @@ class UsuarioPerfilUpdate(BaseModel):
     nome_completo: Optional[str] = None
     funcao: Optional[str] = None
     foto: Optional[str] = None
+    
