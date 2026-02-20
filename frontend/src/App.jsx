@@ -15,6 +15,15 @@ api.interceptors.request.use((config) => {
 });
 
 // ==========================================
+// ESTILOS INLINE PARA OS MODAIS (À PROVA DE FALHAS)
+// ==========================================
+const fixModal = {
+  overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, backdropFilter: 'blur(5px)' },
+  content: { background: 'linear-gradient(145deg, #1e272e, #2c3e50)', padding: '30px', borderRadius: '15px', color: 'white', boxShadow: '0 15px 50px rgba(0,0,0,0.5)' },
+  input: { padding: '12px', borderRadius: '5px', border: '1px solid #7f8c8d', backgroundColor: '#34495e', color: 'white', width: '100%', marginBottom: '15px', boxSizing: 'border-box' },
+  btn: { border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', color: 'white' }
+};
+// ==========================================
 // ANIMAÇÕES E ESTILOS CSS INJETADOS
 // ==========================================
 const globalStyles = `
@@ -350,20 +359,20 @@ const TelaCadastro = () => {
 
       {/* MODAL DE EDIÇÃO */}
       {modalAberto && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ width: '400px' }}>
-            <h3 style={{ marginTop: 0 }}>✏️ Editar Material</h3>
-            <label style={{ fontSize: '12px', color: '#bdc3c7' }}>CÓDIGO</label>
-            <input className="legacy-input-dark" value={editandoItem.codigo} onChange={e => setEditandoItem({...editandoItem, codigo: e.target.value})} />
-            <label style={{ fontSize: '12px', color: '#bdc3c7' }}>NOME DO MATERIAL</label>
-            <input className="legacy-input-dark" value={editandoItem.nome} onChange={e => setEditandoItem({...editandoItem, nome: e.target.value})} />
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
-              <button onClick={() => setModalAberto(false)} className="legacy-btn" style={{ background: '#7f8c8d' }}>CANCELAR</button>
-              <button onClick={salvarEdicao} className="legacy-btn" style={{ background: '#27ae60' }}>SALVAR ALTERAÇÕES</button>
-            </div>
-          </div>
-        </div>
-      )}
+        <div style={fixModal.overlay}>
+          <div style={{ ...fixModal.content, width: '400px' }}>
+            <h3 style={{ marginTop: 0, color: 'white' }}>✏️ Editar Material</h3>
+            <label style={{ fontSize: '12px', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>CÓDIGO</label>
+            <input style={fixModal.input} value={editandoItem.codigo} onChange={e => setEditandoItem({...editandoItem, codigo: e.target.value})} />
+            <label style={{ fontSize: '12px', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>NOME DO MATERIAL</label>
+            <input style={fixModal.input} value={editandoItem.nome} onChange={e => setEditandoItem({...editandoItem, nome: e.target.value})} />
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
+              <button onClick={() => setModalAberto(false)} style={{ ...fixModal.btn, background: '#7f8c8d' }}>CANCELAR</button>
+              <button onClick={salvarEdicao} style={{ ...fixModal.btn, background: '#27ae60' }}>SALVAR ALTERAÇÕES</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -494,26 +503,22 @@ const TelaEntrada = () => {
 
       {/* MODAL DE EDIÇÃO DE ENTRADA */}
       {modalAberto && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ width: '450px' }}>
-            <h3 style={{ marginTop: 0 }}>✏️ Corrigir Entrada</h3>
-            
-            <label style={{ fontSize: '11px', color: '#bdc3c7' }}>NFe</label>
-            <input className="legacy-input-dark" value={editandoEntrada.nfe} onChange={e => setEditandoEntrada({...editandoEntrada, nfe: e.target.value})} />
-            
-            <label style={{ fontSize: '11px', color: '#bdc3c7' }}>QUANTIDADE</label>
-            <input type="number" className="legacy-input-dark" value={editandoEntrada.quantidade} onChange={e => setEditandoEntrada({...editandoEntrada, quantidade: e.target.value})} />
-            
-            <label style={{ fontSize: '11px', color: '#bdc3c7' }}>DATA</label>
-            <input type="date" className="legacy-input-dark" value={editandoEntrada.data_entrega} onChange={e => setEditandoEntrada({...editandoEntrada, data_entrega: e.target.value})} />
-
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
-              <button onClick={() => setModalAberto(false)} className="legacy-btn" style={{ background: '#7f8c8d' }}>CANCELAR</button>
-              <button onClick={salvarEdicao} className="legacy-btn" style={{ background: '#27ae60' }}>SALVAR</button>
-            </div>
-          </div>
-        </div>
-      )}
+        <div style={fixModal.overlay}>
+          <div style={{ ...fixModal.content, width: '450px' }}>
+            <h3 style={{ marginTop: 0, color: 'white' }}>✏️ Corrigir Entrada</h3>
+            <label style={{ fontSize: '11px', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>NFe</label>
+            <input style={fixModal.input} value={editandoEntrada.nfe} onChange={e => setEditandoEntrada({...editandoEntrada, nfe: e.target.value})} />
+            <label style={{ fontSize: '11px', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>QUANTIDADE</label>
+            <input type="number" style={fixModal.input} value={editandoEntrada.quantidade} onChange={e => setEditandoEntrada({...editandoEntrada, quantidade: e.target.value})} />
+            <label style={{ fontSize: '11px', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>DATA</label>
+            <input type="date" style={fixModal.input} value={editandoEntrada.data_entrega} onChange={e => setEditandoEntrada({...editandoEntrada, data_entrega: e.target.value})} />
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
+              <button onClick={() => setModalAberto(false)} style={{ ...fixModal.btn, background: '#7f8c8d' }}>CANCELAR</button>
+              <button onClick={salvarEdicao} style={{ ...fixModal.btn, background: '#27ae60' }}>SALVAR</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -717,24 +722,24 @@ const TelaConfiguracoes = () => {
       </div>
 
       {modalUserAberto && editandoUser && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Editar Perfil: {editandoUser.username}</h3>
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#ecf0f1', display: 'block', marginBottom: '3px' }}>Nome de Usuário</label>
-            <input value={editandoUser.username} onChange={e => setEditandoUser({...editandoUser, username: e.target.value})} className="legacy-input-dark" />
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#ecf0f1', display: 'block', marginBottom: '3px' }}>Nova Senha (deixe em branco para manter)</label>
-            <input type="password" placeholder="***" value={editandoUser.senha} onChange={e => setEditandoUser({...editandoUser, senha: e.target.value})} className="legacy-input-dark" />
-            <label style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '20px' }}>
-              <input type="checkbox" checked={editandoUser.is_admin} onChange={e => setEditandoUser({...editandoUser, is_admin: e.target.checked})} style={{ width: '18px', height: '18px' }} />
-              Acesso Administrativo
-            </label>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setModalUserAberto(false)} className="legacy-btn" style={{ background: '#95a5a6' }}>CANCELAR</button>
-              <button onClick={salvarEdicao} className="legacy-btn" style={{ background: '#2ecc71' }}>SALVAR</button>
-            </div>
-          </div>
-        </div>
-      )}
+        <div style={fixModal.overlay}>
+          <div style={{ ...fixModal.content, width: '450px' }}>
+            <h3 style={{ marginTop: 0, color: 'white' }}>⚙️ Editar Perfil: {editandoUser.username}</h3>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>Nome de Usuário</label>
+            <input style={fixModal.input} value={editandoUser.username} onChange={e => setEditandoUser({...editandoUser, username: e.target.value})} />
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#bdc3c7', display: 'block', marginBottom: '5px' }}>Nova Senha (deixe em branco para manter)</label>
+            <input type="password" placeholder="***" style={fixModal.input} value={editandoUser.senha} onChange={e => setEditandoUser({...editandoUser, senha: e.target.value})} />
+            <label style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '20px' }}>
+              <input type="checkbox" checked={editandoUser.is_admin} onChange={e => setEditandoUser({...editandoUser, is_admin: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+              Acesso Administrativo
+            </label>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setModalUserAberto(false)} style={{ ...fixModal.btn, background: '#95a5a6' }}>CANCELAR</button>
+              <button onClick={salvarEdicao} style={{ ...fixModal.btn, background: '#2ecc71' }}>SALVAR</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -793,4 +798,4 @@ export default function App() {
       </Layout>
     </Router>
   );
-}
+};
