@@ -75,6 +75,18 @@ class Log(BaseModel):
     data: datetime
     model_config = ConfigDict(from_attributes=True)
 
+class LogResponse(BaseModel):
+    id: int
+    data: datetime
+    tipo: str
+    item_nome: str
+    quantidade_movimentada: int
+    usuario_nome: Optional[str] = None
+    detalhes_auditoria: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 # ==========================================
 # SCHEMAS DE USUÁRIOS E SEGURANÇA
 # ==========================================
@@ -100,3 +112,9 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class UsuarioPerfilUpdate(BaseModel):
+    email: Optional[str] = None
+    nome_completo: Optional[str] = None
+    funcao: Optional[str] = None
+    foto: Optional[str] = None

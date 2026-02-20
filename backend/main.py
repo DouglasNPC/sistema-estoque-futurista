@@ -152,6 +152,16 @@ def remover_usuario(usuario_id: int, db: Session = Depends(get_db), usuario_atua
     db.commit()
     return {"msg": "Removido"}
 
+@app.put("/usuarios/perfil")
+def atualizar_perfil(perfil: schemas.UsuarioPerfilUpdate, db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):
+    if perfil.email: usuario_atual.email = perfil.email
+    if perfil.nome_completo: usuario_atual.nome_completo = perfil.nome_completo
+    if perfil.funcao: usuario_atual.funcao = perfil.funcao
+    if perfil.foto: usuario_atual.foto = perfil.foto
+    db.commit()
+    db.refresh(usuario_atual)
+    return usuario_atual
+
 # ==========================================
 # GESTÃO DE PRODUTOS E ESTOQUE
 # ==========================================
@@ -205,9 +215,15 @@ def registrar_entrada(entrada: schemas.EntradaCriar, db: Session = Depends(get_d
     
     item.quantidade_atual += entrada.quantidade
     
-    # MÁGICA DO LOG: Salvamos o Código junto com o Nome fisicamente na tabela!
+    # LOG DE AUDITORIA: Salvamos o código junto com o nome fisicamente na tabela!
     texto_historico = f"[{item.codigo}] {item.nome}"
-    db.add(models.Log(tipo="ENTRADA", item_nome=texto_historico, quantidade_movimentada=entrada.quantidade))
+    db.add(models.Log(
+        tipo="ENTRADA", 
+        item_nome=texto_historico, 
+        quantidade_movimentada=entrada.quantidade,
+        usuario_nome=usuario_atual.username,
+        detalhes_auditoria=f"NFe: {entrada.nfe} | Ref: Cadastro Batch"
+    ))
     
     db.commit()
     db.refresh(nova)
@@ -253,9 +269,15 @@ def registrar_saida(saida: schemas.SaidaCriar, db: Session = Depends(get_db), us
     
     item.quantidade_atual -= saida.quantidade
     
-    # MÁGICA DO LOG: Salvamos o Código junto com o Nome fisicamente na tabela!
+    # LOG DE AUDITORIA: Salvamos o código junto com o nome fisicamente na tabela!
     texto_historico = f"[{item.codigo}] {item.nome}"
-    db.add(models.Log(tipo="SAÍDA", item_nome=texto_historico, quantidade_movimentada=saida.quantidade))
+    db.add(models.Log(
+        tipo="SAÍDA", 
+        item_nome=texto_historico, 
+        quantidade_movimentada=saida.quantidade,
+        usuario_nome=usuario_atual.username,
+        detalhes_auditoria=f"Destino: {saida.secretaria} | Patr: {saida.patrimonio} | Tkt: {saida.ticket or 'N/A'}"
+    ))
     
     db.commit()
     db.refresh(nova)
