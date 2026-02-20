@@ -1,22 +1,24 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
-# --- SCHEMAS PARA ITEM ---
-class ItemBase(BaseModel):
+# ==========================================
+# SCHEMAS DE PRODUTOS E ESTOQUE
+# ==========================================
+
+class ItemCriar(BaseModel):
     codigo: str
     nome: str
 
-class ItemCriar(ItemBase):
-    pass
-
-class Item(ItemBase):
+class Item(ItemCriar):
     id: int
     quantidade_atual: int
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
-# --- SCHEMAS PARA ENTRADA ---
+# ==========================================
+# SCHEMAS DE MOVIMENTAÇÃO (ENTRADAS/SAÍDAS)
+# ==========================================
+
 class EntradaCriar(BaseModel):
     item_id: int
     nfe: str
@@ -26,10 +28,8 @@ class EntradaCriar(BaseModel):
 
 class Entrada(EntradaCriar):
     id: int
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
-# --- SCHEMAS PARA SAÍDA ---
 class SaidaCriar(BaseModel):
     item_id: int
     ticket: str
@@ -39,31 +39,35 @@ class SaidaCriar(BaseModel):
 
 class Saida(SaidaCriar):
     id: int
-    status: str
     data_saida: datetime
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
-# --- SCHEMAS PARA LOG ---
+# ==========================================
+# SCHEMAS DE LOGS E HISTÓRICO
+# ==========================================
+
 class Log(BaseModel):
     id: int
     tipo: str
     item_nome: str
     quantidade_movimentada: int
     data: datetime
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
-# --- SCHEMAS PARA USUÁRIO (Futuro) ---
+# ==========================================
+# SCHEMAS DE USUÁRIOS E SEGURANÇA
+# ==========================================
+
 class UsuarioCriar(BaseModel):
     username: str
-    senha: str
+    senha: Optional[str] = None  # Opcional para quando editamos sem trocar senha
     is_admin: bool = False
 
 class UsuarioResponse(BaseModel):
     id: int
     username: str
     is_admin: bool
+    model_config = ConfigDict(from_attributes=True)
 
 class SenhaAtualizar(BaseModel):
     senha_antiga: str
@@ -72,3 +76,6 @@ class SenhaAtualizar(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
