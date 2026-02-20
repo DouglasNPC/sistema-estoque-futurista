@@ -20,6 +20,8 @@ Este repositório contém o Backend (Python/FastAPI) e o Frontend (React/Vite) d
 3. Derrube a versãoo antiga do sistema: `docker-compose down`
 4. Recontrua e suba a nova versão: `docker-compose up -d --build`
 
+5. LEMBRANDO QUE PARA INICIAR O BECK PRECISA DAR O COMANDO: `python -m uvicorn main:app --reload`
+
 ---------------------------------------------------------------------------
 ## Erros e passos identificados no processo de transferência de atualizações
 ## 🚀 Guia de Instalação (Máquina do Zero)
