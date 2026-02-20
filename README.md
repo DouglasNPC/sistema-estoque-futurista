@@ -2,6 +2,33 @@
 
 Este repositório contém o Backend (Python/FastAPI) e o Frontend (React/Vite) do sistema.
 
+---------------------------------------------------------------------------
+## Erros e passos identificados no processo de transferência de atualizações
+## 🚀 Guia de Instalação (Máquina do Zero)
+
+Ao baixar este projeto em uma nova máquina, siga os passos abaixo para evitar erros de ambiente e dependências.
+
+### 1. Preparação do Backend (Python)
+Os ambientes virtuais (`venv`) não são transferíveis entre máquinas. Você deve recriar o seu localmente.
+
+1. Acesse a pasta do backend: `cd backend`
+2. Remova qualquer venv antiga: `Remove-Item -Recurse -Force venv`
+3. Crie a nova venv: `python -m venv venv`
+4. Ative a venv: `.\venv\Scripts\Activate.ps1`
+5. Instale as dependências: `python -m pip install -r requirements.txt`
+
+### 2. Preparação do Frontend (React)
+A pasta `node_modules` é ignorada pelo Git e precisa ser instalada para compilar as bibliotecas (como o **Recharts**).
+
+1. Acesse a pasta: `cd frontend`
+2. Instale os pacotes: `npm install`
+
+### 3. Banco de Dados e Docker
+1. Inicie os containers: `docker-compose up -d`
+2. Importe o banco de dados atualizado:
+   ```powershell
+   Get-Content backup_producao.sql | docker exec -i estoque_db psql -U admin -d estoque_db
+
 ---
 
 ## 🚀 Como Iniciar os Sistemas
@@ -18,18 +45,6 @@ Este repositório contém o Backend (Python/FastAPI) e o Frontend (React/Vite) d
 
 ---
 
-### 🟡 SISTEMA DE TESTE (HOMOLOGAÇÃO) - Parquinho de Diversões
-**Objetivo:** Testar novas cores, botões e a aba de Logs.
-- **Branch:** `develop`
-- **Backend:** Porta **8001**(Acesso: `http://192.168.3.229:8001/docs`)
-- **Frontend:** Porta **5174** (Acesso: `http://192.168.3.229:5174`)
-
-**Comandos para ligar:**
-1. No Terminal 3 (Backend): `cd backend`, `.\venv\Scripts\activate`, `uvicorn main:app --host 0.0.0.0 --port 8001 --reload`
-2. No Terminal 4 (Frontend): `cd frontend`, `npm run dev -- --host --port 5174`
-
----
-
 ## 🛠️ Regras de Colaboração (Git workflow)
 
 1. **Alterações Visuais:** Devem ser feitas APENAS na branch `develop`.
@@ -41,3 +56,5 @@ Este repositório contém o Backend (Python/FastAPI) e o Frontend (React/Vite) d
 
 ## 🛑 Como Parar os Sistemas
 Clique no terminal desejado e aperte **CTRL + C**.
+
+-----------------------------------------------------------------------------
