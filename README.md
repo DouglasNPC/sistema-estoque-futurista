@@ -58,3 +58,21 @@ A pasta `node_modules` é ignorada pelo Git e precisa ser instalada para compila
 Clique no terminal desejado e aperte **CTRL + C**.
 
 -----------------------------------------------------------------------------
+
+
+## 📥 Importação em Massa (Carga via .CSV)
+
+Para subir centenas de itens de uma vez sem usar a interface do sistema, utilize o **DBeaver**:
+
+1. **Preparação**: O arquivo CSV deve conter ao menos as colunas `codigo` e `nome`.
+2. **Importação**: Clique com o botão direito na tabela `itens` > `Importar Dados`.
+3. **Mapeamento Crítico**: 
+   - A coluna `id` do banco deve ser marcada como **"Pular" (Skip)**.
+   - Caso o seu CSV não tenha a coluna de quantidade, defina um **Valor Constante = 0** para `quantidade_atual` durante o mapeamento.
+4. **Correção de Erros (500 Internal Server Error)**: 
+   - Se os itens não aparecerem no sistema, verifique se há valores nulos na quantidade.
+   - Rode este comando no SQL do DBeaver para corrigir:
+     `UPDATE itens SET quantidade_atual = 0 WHERE quantidade_atual IS NULL;`
+   - Lembre-se de clicar em **Salvar (Commit)** no DBeaver para efetivar as mudanças.
+
+   ----------
