@@ -1,6 +1,24 @@
-# 📦 Sistema de Gestão de Estoque V1.0
+# 📦 Sistema de Gestão de Estoque V1.1.0
 
 Este repositório contém o Backend (Python/FastAPI) e o Frontend (React/Vite) do sistema.
+
+---------------------------------------------------------------------------
+# 🛜 Como fazer a exportação de dados completa com importação eficiente e rápida
+
+### 1.Na máquina teste
+1. Adicione todas as modificações (Frontend e Backend): `git add .`
+2. Crie o commit de versão final: `git commit -m "Descreva a exportação"`
+3. Envie para a branch principal ou develop (main ou develop) do Gith: `git push origin develop:main --force`
+
+### 2. Na máquina em produção
+1. Baixe as atualizações do GitHub: `git fetch origin`
+2. Force o servidor a ficar EXATAMETNTE igual ao GitHub (Isso evita erro de confito em arquivos antigos: `git reset --hard origin/main`
+
+// Antes de subir a nova versão configa o seguinte:
+// 1. Arquivo App.jsx: no início troce localhos pelo ip da máquina
+
+3. Derrube a versãoo antiga do sistema: `docker-compose down`
+4. Recontrua e suba a nova versão: `docker-compose up -d --build`
 
 ---------------------------------------------------------------------------
 ## Erros e passos identificados no processo de transferência de atualizações
