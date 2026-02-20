@@ -195,11 +195,22 @@ def listar_entradas(db: Session = Depends(get_db), usuario_atual: models.Usuario
 @app.post("/entradas/", response_model=schemas.Entrada)
 def registrar_entrada(entrada: schemas.EntradaCriar, db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):
     item = db.query(models.Item).filter(models.Item.id == entrada.item_id).first()
-    nova = models.Entrada(**entrada.dict())
+    if not item:
+        raise HTTPException(status_code=404, detail="Item não encontrado")
+    
+    # Removemos 'codigo' apenas para o banco aceitar a entrada via ID
+    dados_entrada = entrada.dict(exclude={"codigo"})
+    nova = models.Entrada(**dados_entrada)
     db.add(nova)
+    
     item.quantidade_atual += entrada.quantidade
-    db.add(models.Log(tipo="ENTRADA", item_nome=item.nome, quantidade_movimentada=entrada.quantidade))
+    
+    # MÁGICA DO LOG: Salvamos o Código junto com o Nome fisicamente na tabela!
+    texto_historico = f"[{item.codigo}] {item.nome}"
+    db.add(models.Log(tipo="ENTRADA", item_nome=texto_historico, quantidade_movimentada=entrada.quantidade))
+    
     db.commit()
+    db.refresh(nova)
     return nova
 
 @app.put("/entradas/{entrada_id}", response_model=schemas.Entrada)
@@ -222,42 +233,77 @@ def deletar_entrada(entrada_id: int, db: Session = Depends(get_db), usuario_atua
     db.commit()
     return {"msg": "Cancelado"}
 
+# Correção para Frontend - Adição do Front até a próxima #
+
 @app.get("/saidas/", response_model=List[schemas.Saida])
-def listar_saidas(db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):
+def listar_saidas(db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)): 
     return db.query(models.Saida).order_by(models.Saida.data_saida.desc()).all()
 
 @app.post("/saidas/", response_model=schemas.Saida)
 def registrar_saida(saida: schemas.SaidaCriar, db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):
     item = db.query(models.Item).filter(models.Item.id == saida.item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item não encontrado")
+    
     if item.quantidade_atual < saida.quantidade:
         raise HTTPException(status_code=400, detail="Estoque insuficiente")
+    
     nova = models.Saida(**saida.dict())
     db.add(nova)
+    
     item.quantidade_atual -= saida.quantidade
-    db.add(models.Log(tipo="SAÍDA", item_nome=item.nome, quantidade_movimentada=saida.quantidade))
+    
+    # MÁGICA DO LOG: Salvamos o Código junto com o Nome fisicamente na tabela!
+    texto_historico = f"[{item.codigo}] {item.nome}"
+    db.add(models.Log(tipo="SAÍDA", item_nome=texto_historico, quantidade_movimentada=saida.quantidade))
+    
     db.commit()
+    db.refresh(nova)
     return nova
 
 @app.put("/saidas/{saida_id}", response_model=schemas.Saida)
 def editar_saida(saida_id: int, dados: schemas.SaidaCriar, db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):
     sai = db.query(models.Saida).filter(models.Saida.id == saida_id).first()
+    if not sai:
+        raise HTTPException(status_code=404, detail="Registro não encontrado")
+        
     item = db.query(models.Item).filter(models.Item.id == sai.item_id).first()
-    item.quantidade_atual = item.quantidade_atual + sai.quantidade - dados.quantidade
+    
+    # Lógica de ajuste de estoque: Devolve a antiga e retira a nova
+    estoque_temporario = item.quantidade_atual + sai.quantidade
+    if estoque_temporario < dados.quantidade:
+        raise HTTPException(status_code=400, detail="Estoque insuficiente para alteração")
+        
+    item.quantidade_atual = estoque_temporario - dados.quantidade
+    
     sai.ticket = dados.ticket
     sai.patrimonio = dados.patrimonio
     sai.secretaria = dados.secretaria
     sai.quantidade = dados.quantidade
+    
     db.commit()
+    db.refresh(sai)
     return sai
 
 @app.delete("/saidas/{saida_id}")
 def deletar_saida(saida_id: int, db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):
-    sai = db.query(models.Saida).filter(models.Saida.id == sai_id).first()
+    # Corrigido: era sai_id, alterado para saida_id
+    sai = db.query(models.Saida).filter(models.Saida.id == saida_id).first()
+    if not sai:
+        raise HTTPException(status_code=404, detail="Registro não encontrado")
+        
     item = db.query(models.Item).filter(models.Item.id == sai.item_id).first()
+    
+    # Devolve a quantidade ao estoque ao cancelar a saída
     item.quantidade_atual += sai.quantidade
+    
+    db.add(models.Log(tipo="CANCELAMENTO SAÍDA", item_nome=item.nome, quantidade_movimentada=sai.quantidade))
+    
     db.delete(sai)
     db.commit()
-    return {"msg": "Cancelado"}
+    return {"msg": "Saída cancelada e estoque devolvido"}
+
+# Correção para Frontend - Fim
 
 @app.get("/logs/", response_model=List[schemas.Log])
 def listar_logs(db: Session = Depends(get_db), usuario_atual: models.Usuario = Depends(obter_usuario_atual)):

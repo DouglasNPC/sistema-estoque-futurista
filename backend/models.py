@@ -16,6 +16,8 @@ class Item(Base):
     codigo = Column(String, unique=True, index=True)
     nome = Column(String)
     quantidade_atual = Column(Integer, default=0)
+    #
+    saidas = relationship("Saida", back_populates="item")
 
 class Entrada(Base):
     __tablename__ = "entradas"
@@ -30,11 +32,14 @@ class Saida(Base):
     __tablename__ = "saidas"
     id = Column(Integer, primary_key=True, index=True)
     item_id = Column(Integer, ForeignKey("itens.id"))
-    ticket = Column(String)
-    patrimonio = Column(String)
+    ticket = Column(String, nullable=True) # Pode ser nulo
+    patrimonio = Column(String, nullable=False) # Agora é obrigatório (não pode ser nulo)
     secretaria = Column(String)
     quantidade = Column(Integer)
     data_saida = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Relacionamento para facilitar consultas
+    item = relationship("Item", back_populates="saidas")
 
 class Log(Base):
     __tablename__ = "logs"

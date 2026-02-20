@@ -21,6 +21,7 @@ class Item(ItemCriar):
 
 class EntradaCriar(BaseModel):
     item_id: int
+    codigo: Optional[str] = None  # Recebe o código do Front para evitar Erro 422
     nfe: str
     quantidade: int
     data_entrega: datetime
@@ -30,16 +31,36 @@ class Entrada(EntradaCriar):
     id: int
     model_config = ConfigDict(from_attributes=True)
 
+# ==========================================
+# SCHEMAS DE MOVIMENTAÇÃO (ENTRADAS/SAÍDAS) - Adição do Frotn até a próxima #
+# ==========================================
+
 class SaidaCriar(BaseModel):
     item_id: int
-    ticket: str
-    patrimonio: str
+    quantidade: int
+    patrimonio: str               # Agora é obrigatório conforme o App.jsx
+    secretaria: str
+    ticket: Optional[str] = None  # Opcional no App.jsx
+
+class SaidaCriar(BaseModel):
+    item_id: int
+    ticket: Optional[str] = None      # Adicione Optional e None
+    patrimonio: Optional[str] = None  # Adicione Optional e None para evitar o erro 422
     secretaria: str
     quantidade: int
 
 class Saida(SaidaCriar):
     id: int
     data_saida: datetime
+    item_nome: Optional[str] = None 
+
+    @classmethod
+    def model_validate(cls, obj, **kwargs):
+        res = super().model_validate(obj, **kwargs)
+        if hasattr(obj, "item") and obj.item:
+            res.item_nome = obj.item.nome
+        return res
+
     model_config = ConfigDict(from_attributes=True)
 
 # ==========================================
